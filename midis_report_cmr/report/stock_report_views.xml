@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_report_stock_cmr" model="ir.actions.report">
+            <field name="name">CMR</field>
+            <field name="model">stock.picking</field>
+            <field name="report_type">qweb-html</field>
+            <field name="report_name">midis_report_cmr.report_cmr</field>
+            <field name="report_file">midis_report_cmr.report_cmr</field>
+            <field name="print_report_name">'CMR - %s - %s' % (object.partner_id.name or '', object.name)</field>
+            <field name="binding_model_id" ref="stock.model_stock_picking"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

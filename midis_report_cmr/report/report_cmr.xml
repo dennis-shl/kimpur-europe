@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="external_layout_cmr">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+
+        <t t-call="midis_report_cmr.external_layout_boxed_cmr"><t t-raw="0"/></t>
+    </template>
+    <template id="external_layout_boxed_cmr">
+        <div t-attf-class="header o_company_#{company.id}_layout"/>
+        <div style="font-size: 11px;" t-attf-class="article o_company_#{company.id}_layout" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <style>
+                .inner-block {
+                    top:300px;
+                    position:absolute;
+                    width:99%;
+                    opacity: 0.1;
+                    height:600px;
+                    z-index: -1000;
+                }
+            </style>
+            <img class="inner-block" src="/midis_report_cmr/static/src/img/cmr.png"/>
+            <t t-raw="0"/>
+        </div>
+        <div t-attf-class="footer o_company_#{company.id}_layout"/>
+    </template>
+    <template id="report_cmr_document">
+        <t t-call="web.html_container">
+            <t t-call="midis_report_cmr.external_layout_cmr">
+                <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)"/>
+                <t t-set="company_address" t-value="get_company_address()"/>
+                <t t-set="partner_delivery_address" t-value="get_partner_delivery_address(o)"/>
+                <t t-set="partner_delivery_address_next" t-value="get_partner_delivery_address_next(o)"/>
+                <t t-set="partner_picking_address" t-value="get_partner_picking_address(o)"/>
+                <t t-set="annexed_documents" t-value="get_annexed_documents(o)"/>
+                <t t-set="notes" t-value="get_notes(o)"/>
+                <t t-set="car_data" t-value="get_car_data(o)"/>
+                <t t-set="carrier_data" t-value="get_carrier_data(o)"/>
+                <t t-set="goods_data" t-value="get_goods_data(o)"/>
+                <t t-set="incoterm" t-value="get_incoterm(o)"/>
+
+                <div class="page">
+                    <style>
+                        .cmr-table td {
+                            padding-left: 5px;
+                            padding-top: 0;
+                        }
+                        .cmr-table {
+                            margin-bottom: 0px;
+                            border-top: 1px solid;
+                            border-left: 1px solid;
+                            border-right: 1px solid;
+                            width: 100%;
+                        }
+                        p {
+                            margin-bottom: 0;
+                        }
+                    </style>
+                    <table class="cmr-table" name="cmr_header">
+                        <tbody>
+                            <tr>
+                                <td style="width: 1rem; font-weight: bold;">1</td>
+                                <td style="width: 40%; border-right: 1px solid;">Nosūtītājs (nosaukums, adrese, valsts)<br/>
+                                    Consignor (name, address, state)
+                                </td>
+                                <td style="font-weight: bold; border-right: none;">Starptautiskā preču-transporta pavadzīme<br/>
+                                    International waybill
+                                </td>
+                                <td style="font-weight: bold; text-align: center; font-size: 22px;">CMR</td>
+                                <td style="font-weight: bold; text-align: center; font-size: 22px;">LV - </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold;  border-right: 1px solid" colspan="2" t-raw="company_address"/>
+                                <td style="">Šis pārvadājums ir veicams saskaņā ar Konvenciju par starptautiskām kravu pārvadājumiem, neskatoties ne uz kādiem citiem līgumiem</td>
+                                <td style="" colspan="2">This transport operation has to be carried out according to the Convention on the contract for the international carriage of goods by road (CMR), irrespective of any other contracts</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="cmr-table" name="cmr_post_header">
+                        <tbody>
+                            <tr>
+                                <td style="width: 1rem; font-weight: bold;">2</td>
+                                <td style="width: 40%">Saņēmējs (nosaukums, adrese, valsts)<br/>
+                                    Consignee (name, address, state)
+                                </td>
+                                <td style="font-weight: bold; width: 1rem; border-left: 3px solid; border-top: 3px solid;">16</td>
+                                <td style="border-top: 3px solid; border-right: 3px solid;">Pārvādājs (nosaukums, adrese, valsts)<br/>
+                                    Carrier/Forwarder (name, address, state)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <span t-esc="o.sale_id.partner_id.name" style="font-weight:bold"/><br/>
+                                    <span t-raw="partner_delivery_address"><br/></span>
+                                </td>
+                                <td style="border-left: 3px solid; border-right: 3px solid;" colspan="2"/>
+                            </tr>
+                            <tr>
+                                <td style="border-top: 1px solid; width: 1rem; font-weight: bold;">3</td>
+                                <td style="width: 40%">Kravas izkraušanas vieta<br/>
+                                    Place of delivery of the goods
+                                </td>
+                                <td style="font-weight: bold; border-top: 1px solid; width: 1rem; border-left: 3px solid;">17</td>
+                                <td style="border-right: 3px solid; border-top: 1px solid;">Turpmakais pārvadātājs (nosaukums, adrese, valsts)<br/>
+                                    Successive carriers (name, address, state)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <span>Vieta/Place</span><br/>
+                                    <span t-raw="partner_delivery_address_next"><br/></span>
+                                </td>
+                                <td style="border-left: 3px solid; border-right: 3px solid;" colspan="2">
+                                    <span t-raw="carrier_data['info']"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-top: 1px solid; width: 1rem; font-weight: bold;">4</td>
+                                <td style="width: 40%">Kravas iekraušanas vieta un datums<br/>
+                                    Place and date of taking overof of the goods
+                                </td>
+                                <td style="font-weight: bold; width: 1rem; border-left: 3px solid; border-top: 1px solid;">18</td>
+                                <td style="border-right: 3px solid; border-top: 1px solid;">Pārvadātāja aizradījumi un piezīmes<br/>
+                                    Carrier`s reservations and observations
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <span>Vieta/Place: </span><strong t-esc="goods_data['place']"/><br/><br/>
+                                    <span>Valsts/State: </span><strong t-esc="goods_data['state']"/><br/><br/>
+                                    <span>Datums/Date: </span><strong t-esc="goods_data['date']"/>
+                                </td>
+                                <td style="border-left: 3px solid; border-right: 3px solid;" colspan="2">
+                                    <div t-raw="carrier_data['note']"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-top: 1px solid; width: 1rem; font-weight: bold;">5</td>
+                                <td style="width: 40%">Pievienotie dokumenti<br/>
+                                    Annexed documents
+                                </td>
+                                <td style="border-right: 3px solid; border-left: 3px solid;" colspan="2"/>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <span t-esc="annexed_documents"/>
+                                </td>
+                                <td style="border-left: 3px solid; border-right: 3px solid; border-bottom: 3px solid;" colspan="2"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="cmr-table" name="cmr_core">
+                        <tbody>
+                            <tr style="border-bottom: 1px solid;">
+                                <td style="width: 1rem; font-weight: bold;">6</td>
+                                <td>Zīmes un numuri<br/>
+                                    Marks and Nrs
+                                </td>
+                                <td style="width: 1rem; font-weight: bold;">7</td>
+                                <td>Vietu skaits<br/>
+                                    Number of pack
+                                </td>
+                                <td style="width: 1rem; font-weight: bold;">8</td>
+                                <td>Iepakojuma veids<br/>
+                                    Method of Packing
+                                </td>
+                                <td style="width: 1rem; font-weight: bold;">9</td>
+                                <td>Kravas Nosaukums<br/>
+                                    Nat. of the goods
+                                </td>
+                                <td style="width: 1rem; font-weight: bold;">10</td>
+                                <td>Statist. Nr.<br/>
+                                    Stat. Nr.
+                                </td>
+                                <td style="width: 1rem; font-weight: bold;">11</td>
+                                <td>Bruto svars<br/>
+                                    Gross w. in kg
+                                </td>
+                                <td style="width: 1rem; font-weight: bold;">12</td>
+                                <td style="">Apjoms m³<br/>
+                                    Volume in m³
+                                </td>
+                            </tr>
+
+                            <t t-set="lines" t-value="o.move_line_ids_without_package"/>
+                            <tr style="" t-foreach="lines" t-as="line">
+                                <t t-set="product_data" t-value="get_product_data(line)"/>
+                                <td colspan="2">
+                                    <span t-raw="product_data['name']" />
+                                </td>
+                                <td colspan="2">
+                                    <strong t-raw="product_data['number']"/>
+                                </td>
+                                <td colspan="2">
+                                    <br/>
+                                </td>
+                                <td colspan="2">
+                                    <br/>
+                                </td>
+                                <td colspan="2">
+                                    <br/>
+                                </td>
+                                <td colspan="2">
+                                    <strong t-raw="product_data['weight']"/>
+                                </td>
+                                <td colspan="2">
+                                    <strong t-raw="product_data['volume']"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2">
+                                    Klase<br/>
+                                    Class
+                                </td>
+                                <td colspan="2">
+                                    Cipars<br/>
+                                    Digit
+                                </td>
+                                <td colspan="2">
+                                    Burts<br/>
+                                    Symbol
+                                </td>
+                                <td colspan="2">
+                                    ADR<br/>
+                                    ADR
+                                </td>
+                                <td colspan="2">
+                                    <br/>
+                                </td>
+                                <td colspan="2">
+                                    <br/>
+                                </td>
+                                <td colspan="2">
+                                    <br/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="cmr-table" name="cmr_post_core">
+                        <tbody>
+                            <tr>
+                                <td style="width: 1rem; font-weight: bold;">13</td>
+                                <td style="width: 40%">Nosūtītāja norādījumi<br/>
+                                    Sender`s instructions (Custom and other formalities)
+                                </td>
+                                <td style="font-weight: bold; width: 1rem; border-left: 3px solid; border-top: 3px solid;">19</td>
+                                <td style="border-top: 3px solid; border-right: 1px solid;">Jāapmaksā:<br/>
+                                    To be paid by:
+                                </td>
+                                <td style="border-top: 3px solid; border-bottom: 1px solid; border-right: 1px solid;" colspan="2">Sūtītājs<br/>
+                                    Sender
+                                </td>
+                                <td style="border-top: 3px solid; border-bottom: 1px solid; border-right: 1px solid;" colspan="2">Valūta<br/>
+                                    Currency
+                                </td>
+                                <td style="border-top: 3px solid; border-right: 3px solid; border-bottom: 1px solid;" colspan="2">Saņēmējs<br/>
+                                    Consegnee
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="" colspan="2"><br/></td>
+                                <td style=" border-right: 1px solid; border-left: 3px solid;  border-bottom: 3px solid;" colspan="2">
+                                    Likme/Carr. charges
+                                </td>
+                                <td style="border-bottom: 3px solid;">
+                                </td>
+                                <td style="border-right: 1px solid; border-bottom: 3px solid;">
+                                </td>
+                                <td style="border-bottom: 3px solid; border-right: 3px solid;">
+                                </td>
+                                <td style="border-right: 1px solid; border-bottom: 3px solid;">
+                                </td>
+                                <td style="border-right: 1px solid; border-bottom: 3px solid;">
+                                </td>
+                                <td style="border-bottom: 3px solid; border-right: 3px solid;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom: 1px solid;" colspan="2">
+                                    <span t-esc="notes"/>
+                                </td>
+                                <td style="border-right: 1px solid; border-left: 3px solid;  border-bottom: 3px solid;" colspan="2">
+                                    Atlaides/Reductions - <br/>
+                                    Starpība/Balance<br/>
+                                    Uzcen./Supp.charges<br/>
+                                    Pap.iekas.i/Other ch.<br/>
+                                    Citi/Miscellaneous + <br/>
+                                    Kopā/Tot. to be paid
+                                </td>
+                                <td style="border-bottom: 3px solid;">
+                                </td>
+                                <td style="border-right: 1px solid; border-bottom: 3px solid;">
+                                </td>
+                                <td style="border-bottom: 3px solid; border-right: 3px solid;">
+                                </td>
+                                <td style="border-right: 1px solid; border-bottom: 3px solid;">
+                                </td>
+                                <td style="border-right: 1px solid; border-bottom: 3px solid;">
+                                </td>
+                                <td style="border-bottom: 3px solid; border-right: 3px solid;">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="cmr-table" name="cmr_pre_footer" style="border-top: none;">
+                        <tbody>
+                            <tr style="border-bottom: 1px solid;">
+                                <td style="width: 1rem; font-weight: bold;">14</td>
+                                <td style="width: 40%;">Atmaksas<br/>
+                                    Retributive
+                                </td>
+                                <td style="" colspan="2"/>
+                            </tr>
+                            <tr style="border-bottom: 1px solid;">
+                                <td style="width: 1rem; font-weight: bold;">15</td>
+                                <td style="width: 40%; border-right: 1px solid;">Apmaksas noteikumi<br/>
+                                    Directions and freight payment <strong t-esc="incoterm"/>
+                                </td>
+                                <td style="width: 1rem; font-weight: bold;">20</td>
+                                <td>Īpaši saskaņoti noteikumi<br/>
+                                    Special agreements
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style=" border-right: 1px solid;" colspan="2">Franko/Freight paid<br/>
+                                    Netranko/Freight to be paid
+                                </td>
+                                <td colspan="2"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="cmr-table" name="cmr_footer">
+                        <tbody>
+                            <tr style="">
+                                <td style="border-right: 1px solid; width: 33%;" colspan="2">
+                                    <strong style="padding-right: 5px;">21</strong>Sastādīts<br/>
+                                    Established in
+                                </td>
+                                <td style="border-right: 1px solid; width: 33%;" colspan="2">Datums<br/>
+                                    Date
+                                </td>
+                                <td style="width: 1rem; font-weight: bold;">24</td>
+                                <td>Krava saņemta<br/>
+                                    Good received
+                                </td>
+                                <td>Datums<br/>
+                                    Date
+                                </td>
+                            </tr>
+                            <tr>
+                                <td t-if="goods_data['place']" style="border-right: 1px solid; font-weight:bold; border-bottom: 1px solid;" colspan="2">
+                                    <strong t-esc="goods_data['place']"/>, <strong t-esc="goods_data['state']"/><br/><br/>
+                                </td>
+                                <td t-if="not goods_data['place']" style="border-right: 1px solid; font-weight:bold; border-bottom: 1px solid;" colspan="2">
+                                    <strong t-esc="goods_data['state']"/><br/><br/>
+                                </td>
+                                <td style="border-right: 1px solid; font-weight:bold; border-bottom: 1px solid;" colspan="2">
+                                    <strong t-esc="goods_data['date']"/><br/><br/>
+                                </td>
+                                <td colspan="3"/>
+                            </tr>
+                            <tr style="">
+                                <td style="border-right: 1px solid;" colspan="2">
+                                    <strong style="padding-right: 5px;">22</strong>Signature and stamp of the sender
+                                </td>
+                                <td style="border-right: 1px solid;" colspan="2">
+                                    <strong style="padding-right: 5px;">23</strong>Signature and stamp of the carrier
+                                </td>
+                                <td style="" colspan="3"/>
+                            </tr>
+                            <tr>
+                                <td style="border-right: 1px solid; border-bottom: 1px solid;" colspan="2">
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                </td>
+                                <td style="border-right: 1px solid; border-bottom: 1px solid;" colspan="2">
+                                    <br/>
+                                </td>
+                                <td colspan="3">
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong style="padding-right: 5px;">25</strong>Reģistr.Nr./Ident. Number
+                                </td>
+                                <td style=" border-right: 1px solid;">
+                                    <span t-esc="car_data['id_number_25']"/>
+                                </td>
+                                <td>
+                                    <strong style="padding-right: 5px;">26</strong>Marka/type
+                                </td>
+                                <td style=" border-right: 1px solid;">
+                                    <span t-esc="car_data['type_26']"/>
+                                </td>
+                                <td colspan="3">
+                                </td>
+                            </tr>
+                            <tr style="">
+                                <td>
+                                    Vilcējs/Car
+                                </td>
+                                <td style="border-right: 1px solid;">
+                                    Puspiekabe/sidecar
+                                </td>
+                                <td>
+                                    Vilcējs/Car
+                                </td>
+                                <td style="border-right: 1px solid;">
+                                    Puspiekabe/sidecar
+                                </td>
+                                <td colspan="3">
+                                    Saņēmēja paraksts un zīmogs<br/>
+                                    Signature and stamp of the consignee
+                                </td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid;">
+                                <td>
+                                    <span t-esc="car_data['car_25']"/>
+                                </td>
+                                <td style="border-right: 1px solid;">
+                                    <span t-esc="car_data['sidecar_25']"/>
+                                </td>
+                                <td>
+                                    <span t-esc="car_data['car_26']"/>
+                                </td>
+                                <td style="border-right: 1px solid;">
+                                    <span t-esc="car_data['sidecar_26']"/>
+                                </td>
+                                <td colspan="3">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+         </t>
+    </template>
+
+    <template id="report_cmr">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="midis_report_cmr.report_cmr_document" t-lang="o.partner_id.lang"/>
+        </t>
+    </template>
+</odoo>

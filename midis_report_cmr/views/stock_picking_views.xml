@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_picking_form_sharkcage_stock" model="ir.ui.view">
+            <field name="name">stock.picking.form.sharkcage.stock</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+<!--                <xpath expr="//page[@name='extra']" position="inside">-->
+<!--                    <group>-->
+<!--                        <group string="CMR Information" name="cmr_infos">-->
+<!--                            <field string="Delivery Address" name="delivery_address_id" domain="[('type', '=', 'delivery'), ('parent_id', '=', partner_id)]"/>-->
+<!--                        </group>-->
+<!--                    </group>-->
+<!--                </xpath>-->
+                <xpath expr="//page[@name='note']" position="after">
+                    <page string="CMR" name="cmr">
+                        <group>
+                            <group string="Place and Date of taking of the Goods" name="goods">
+                                <field name="place"/>
+                                <field name="country_id"/>
+                                <field name="date"/>
+                            </group>
+                            <group string="Carrier`s Info">
+                                <field name="carrier_address"/>
+                                <field name="carrier_notes"/>
+                            </group>
+                            <group string="Place of Delivery of the Goods" name="place goods">
+                                <field name="is_delivery_manual"/>
+                                <field name="delivery_address_id" attrs="{'invisible': [('is_delivery_manual', '=' , False)]}"/>
+                            </group>
+                            <group string="Other Info">
+                                <field name="annexed_documents"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group name="cmr_left">
+                                <field name="id_number_25"/>
+                                <field name="car_25"/>
+                                <field name="sidecar_25"/>
+                            </group>
+                            <group name="cmr_right">
+                                <field name="type_26"/>
+                                <field name="car_26"/>
+                                <field name="sidecar_26"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
