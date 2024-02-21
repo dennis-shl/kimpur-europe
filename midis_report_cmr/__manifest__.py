@@ -18,5 +18,4 @@
         'views/stock_picking_views.xml',
         'views/product_template_views.xml',
     ],
-    'application': True,
 }
