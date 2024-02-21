@@ -1,26 +1,22 @@
 from odoo import api, models
+from odoo.tools import plaintext2html
 
 
 class ReportCMR(models.AbstractModel):
     _name = 'report.midis_report_cmr.report_cmr'
     _description = 'CMR Report'
 
-    def get_company_address(self):
-        company = self.env.company.partner_id
-        info = company.with_context({'show_address': True,'html_format': True, 'show_vat': True}).display_name
-
-        return info + '<br/><br/>'
+    def get_company_address(self, doc):
+        partner = doc.sudo().company_id.partner_id
+        address = partner.with_context({'show_address': True}).display_name or ''
+        address = plaintext2html(address)
+        return address
 
     def get_partner_delivery_address(self, o):
-        partner = o.sale_id.partner_id if o.sale_id else False
-        if partner:
-            info = partner.with_context({'show_address': True, 'address_inline': True}).display_name
-            excess = info.find(',') + 1
-            info = info[excess::]
-            info = info + '<br/><br/>'
-            return info
-        else:
-            return ''
+        partner = o.sale_id.partner_id
+        address = partner.contact_address or ''
+        address = plaintext2html(address)
+        return address
 
     def get_partner_delivery_address_next(self, picking):
         if picking.is_delivery_manual and picking.delivery_address_id:
@@ -41,7 +37,7 @@ class ReportCMR(models.AbstractModel):
             info = info + address
             info = info + '<br/><br/>'
         else:
-            info = picking.sale_id.partner_shipping_id.display_name if picking.sale_id else ''
+            info = picking.sale_id.partner_shipping_id.with_context({'show_address': True}).display_name if picking.sale_id else ''
             if info:
                 info = info.replace('\n', '<br/>')
             else:
