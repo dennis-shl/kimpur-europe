@@ -12,9 +12,9 @@
         'web',
     ],
     'data': [
-        'data/report_paperformat.xml',
         'report/report_cmr.xml',
         'report/stock_report_views.xml',
+        'data/report_paperformat.xml',
         'views/stock_picking_views.xml',
         'views/product_template_views.xml',
     ],
