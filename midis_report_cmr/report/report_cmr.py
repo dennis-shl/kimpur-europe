@@ -7,14 +7,14 @@ class ReportCMR(models.AbstractModel):
 
     def get_company_address(self):
         company = self.env.company.partner_id
-        info = company.with_context({'show_address': True,'html_format': True,'show_vat': True,})._get_name()
+        info = company.with_context({'show_address': True,'html_format': True, 'show_vat': True}).display_name
 
         return info + '<br/><br/>'
 
     def get_partner_delivery_address(self, o):
         partner = o.sale_id.partner_id if o.sale_id else False
         if partner:
-            info = partner.with_context({'show_address': True, 'address_inline': True})._get_name()
+            info = partner.with_context({'show_address': True, 'address_inline': True}).display_name
             excess = info.find(',') + 1
             info = info[excess::]
             info = info + '<br/><br/>'
@@ -41,7 +41,7 @@ class ReportCMR(models.AbstractModel):
             info = info + address
             info = info + '<br/><br/>'
         else:
-            info = picking.sale_id.delivery_address if picking.sale_id else ''
+            info = picking.sale_id.partner_shipping_id.display_name if picking.sale_id else ''
             if info:
                 info = info.replace('\n', '<br/>')
             else:
@@ -105,7 +105,7 @@ class ReportCMR(models.AbstractModel):
 
         name = name + '<br/>'
 
-        number = line.qty_done
+        number = line.quantity
         weight = line.product_id.weight * number
         volume = line.product_id.volume * number
 
