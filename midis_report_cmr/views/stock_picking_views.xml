@@ -27,7 +27,7 @@
                             </group>
                             <group string="Place of Delivery of the Goods" name="place goods">
                                 <field name="is_delivery_manual"/>
-                                <field name="delivery_address_id" attrs="{'invisible': [('is_delivery_manual', '=' , False)]}"/>
+                                <field name="delivery_address_id" invisible="is_delivery_manual == False"/>
                             </group>
                             <group string="Other Info">
                                 <field name="annexed_documents"/>
