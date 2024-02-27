@@ -43,7 +43,7 @@
                 <t t-set="company_address" t-value="get_company_address(o)"/>
                 <t t-set="partner_delivery_address" t-value="get_partner_delivery_address(o)"/>
                 <t t-set="partner_delivery_address_next" t-value="get_partner_delivery_address_next(o)"/>
-                <t t-set="partner_picking_address" t-value="get_partner_picking_address(o)"/>
+<!--                <t t-set="partner_picking_address" t-value="get_partner_picking_address(o)"/>-->
                 <t t-set="annexed_documents" t-value="get_annexed_documents(o)"/>
                 <t t-set="notes" t-value="get_notes(o)"/>
                 <t t-set="car_data" t-value="get_car_data(o)"/>

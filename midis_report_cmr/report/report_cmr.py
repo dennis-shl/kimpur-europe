@@ -31,7 +31,7 @@ class ReportCMR(models.AbstractModel):
             if delivery_partner:
                 partner = delivery_partner
             info = '<strong>' + name + '</strong><br/>'
-            address = partner.with_context({'show_address': True, 'address_inline': True})._get_name()
+            address = partner.with_context({'show_address': True, 'address_inline': True}).display_name
             excess = address.find(',') + 1
             address = address[excess::]
             info = info + address
@@ -137,7 +137,7 @@ class ReportCMR(models.AbstractModel):
             'get_company_address': self.get_company_address,
             'get_partner_delivery_address': self.get_partner_delivery_address,
             'get_partner_delivery_address_next': self.get_partner_delivery_address_next,
-            'get_partner_picking_address': self.get_partner_picking_address,
+            # 'get_partner_picking_address': self.get_partner_picking_address,
             'get_annexed_documents': self.get_annexed_documents,
             'get_notes': self.get_notes,
             'get_car_data': self.get_car_data,
