@@ -7,18 +7,19 @@ class Picking(models.Model):
     name = fields.Char('Reference', default='/', copy=False, index=True, readonly=False)
     annexed_documents = fields.Char()
 
-    id_number_25 = fields.Char('Identification Number')
-    car_25 = fields.Char('Car')
-    sidecar_25 = fields.Char('Sidecar')
-    type_26 = fields.Char('Type')
-    car_26 = fields.Char('Car')
-    sidecar_26 = fields.Char('Sidecar')
+    id_number_25 = fields.Char('Ident. Number 25')
+    car_25 = fields.Char()
+    sidecar_25 = fields.Char()
+    type_26 = fields.Char()
+    car_26 = fields.Char()
+    sidecar_26 = fields.Char()
 
     carrier_address = fields.Text('Successive Carriers')
     carrier_notes = fields.Text(string='Carrier`s Reservations and Observations')
+    carrier_details = fields.Text(string='Signature and stamp of the carrier 23')
 
     place = fields.Char()
-    country_id = fields.Many2one('res.country', default=lambda self: self.env['res.country'].search([('code', '=', 'LV')], limit=1))
+    cmr_country = fields.Char('Country')
     date = fields.Date()
 
     is_delivery_manual = fields.Boolean('Select Partner', default=False)

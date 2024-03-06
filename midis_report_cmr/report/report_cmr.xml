@@ -40,8 +40,8 @@
         <t t-call="web.html_container">
             <t t-call="midis_report_cmr.external_layout_cmr">
                 <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)"/>
-                <t t-set="company_address" t-value="get_company_address(o)"/>
-                <t t-set="partner_delivery_address" t-value="get_partner_delivery_address(o)"/>
+                <t t-set="consignor_name" t-value="get_consignor_name(o)"/>
+                <t t-set="consignee_name_address" t-value="get_consignee_name_address(o)"/>
                 <t t-set="partner_delivery_address_next" t-value="get_partner_delivery_address_next(o)"/>
 <!--                <t t-set="partner_picking_address" t-value="get_partner_picking_address(o)"/>-->
                 <t t-set="annexed_documents" t-value="get_annexed_documents(o)"/>
@@ -79,10 +79,13 @@
                                     International waybill
                                 </td>
                                 <td style="font-weight: bold; text-align: center; font-size: 22px;">CMR</td>
-                                <td style="font-weight: bold; text-align: center; font-size: 22px;">LV - </td>
+                                <td style="font-weight: bold; text-align: center; font-size: 22px;">LV - <t t-out="o.name"/></td>
                             </tr>
                             <tr>
-                                <td style="font-weight:bold;  border-right: 1px solid" colspan="2" t-raw="company_address"/>
+                                <td style="font-weight:bold;  border-right: 1px solid" colspan="2" >
+                                    <t t-out="get_consignor_name(o)"/><br/>
+                                    <t t-out="get_consignor_address(o)"/><br/>
+                                </td>
 <!--                                <br/><br/>-->
                                 <td style="">Šis pārvadājums ir veicams saskaņā ar Konvenciju par starptautiskām kravu pārvadājumiem, neskatoties ne uz kādiem citiem līgumiem</td>
                                 <td style="" colspan="2">This transport operation has to be carried out according to the Convention on the contract for the international carriage of goods by road (CMR), irrespective of any other contracts</td>
@@ -104,7 +107,7 @@
                             <tr>
                                 <td colspan="2">
 <!--                                    <span t-esc="o.sale_id.partner_id.name" style="font-weight:bold"/><br/>-->
-                                    <span t-raw="partner_delivery_address" style="font-weight:bold"/>
+                                    <span t-raw="consignee_name_address" style="font-weight:bold"/>
                                 </td>
                                 <td style="border-left: 3px solid; border-right: 3px solid;" colspan="2"/>
                             </tr>
@@ -130,7 +133,7 @@
                             <tr>
                                 <td style="border-top: 1px solid; width: 1rem; font-weight: bold;">4</td>
                                 <td style="width: 40%">Kravas iekraušanas vieta un datums<br/>
-                                    Place and date of taking overof of the goods
+                                    Place and date of taking over of the goods
                                 </td>
                                 <td style="font-weight: bold; width: 1rem; border-left: 3px solid; border-top: 1px solid;">18</td>
                                 <td style="border-right: 3px solid; border-top: 1px solid;">Pārvadātāja aizradījumi un piezīmes<br/>
@@ -205,7 +208,7 @@
                                     <strong t-raw="product_data['number']"/>
                                 </td>
                                 <td colspan="2">
-                                    <br/>
+                                    <strong t-raw="product_data['method_packing']"/>
                                 </td>
                                 <td colspan="2">
                                     <br/>
@@ -389,7 +392,7 @@
                                     <br/>
                                 </td>
                                 <td style="border-right: 1px solid; border-bottom: 1px solid;" colspan="2">
-                                    <br/>
+                                    <t t-out="carrier_data['carrier_details']"/>
                                 </td>
                                 <td colspan="3">
                                     <br/>

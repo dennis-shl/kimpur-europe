@@ -18,12 +18,13 @@
                         <group>
                             <group string="Place and Date of taking of the Goods" name="goods">
                                 <field name="place"/>
-                                <field name="country_id"/>
+                                <field name="cmr_country"/>
                                 <field name="date"/>
                             </group>
                             <group string="Carrier`s Info">
                                 <field name="carrier_address"/>
                                 <field name="carrier_notes"/>
+                                <field name="carrier_details"/>
                             </group>
                             <group string="Place of Delivery of the Goods" name="place goods">
                                 <field name="is_delivery_manual"/>
