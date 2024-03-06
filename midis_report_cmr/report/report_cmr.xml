@@ -214,7 +214,7 @@
                                     <br/>
                                 </td>
                                 <td colspan="2">
-                                    <br/>
+                                    <strong t-raw="product_data['intrastat_code']"/>
                                 </td>
                                 <td colspan="2">
                                     <strong t-raw="product_data['weight']"/>

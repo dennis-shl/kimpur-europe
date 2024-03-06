@@ -119,7 +119,8 @@ class ReportCMR(models.AbstractModel):
             'number': number,
             'weight': ' ' if weight == 0 else weight,
             'volume': ' ' if volume == 0 else volume,
-            'method_packing': line.move_id.product_packaging_id.display_name or ''
+            'method_packing': line.move_id.product_packaging_id.display_name or '',
+            'intrastat_code': line.product_id.intrastat_code_id.code or ''
         }
 
     def get_goods_data(self, picking):
