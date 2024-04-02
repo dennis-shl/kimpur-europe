@@ -28,5 +28,3 @@ class Picking(models.Model):
     delivery_address_id = fields.Many2one('res.partner')
 
     sender_instructions = fields.Char("Sender's Instructions")
-
-    carrier_address = fields.Text('Successive Carriers Temp')
