@@ -1,5 +1,8 @@
+import itertools
+from collections import defaultdict
+
 from odoo import api, models
-from odoo.tools import plaintext2html, get_lang
+from odoo.tools import plaintext2html, get_lang, float_round
 
 
 class ReportCMR(models.AbstractModel):
@@ -7,6 +10,7 @@ class ReportCMR(models.AbstractModel):
     _description = 'CMR Report'
 
     def get_consignor_name(self, picking):
+
         company_name = picking.sudo().company_id.partner_id.commercial_company_name
         # address = partner.with_context({'show_address': True, 'address_inline': True}).display_name or ''
         # address = partner.contact_address or ''
@@ -19,6 +23,23 @@ class ReportCMR(models.AbstractModel):
     def get_consignor_address(self, picking):
         return picking.sudo().company_id.partner_id._display_address(without_company=True)
 
+    def get_consignor_adrress_without_country(self, partner_id):
+        address_format = partner_id._get_address_format()
+        args = defaultdict(str, {
+            'country_code': partner_id.country_id.code or '',
+            'country_name': '',
+            'company_name': '',
+        })
+        for field in partner_id._formatting_address_fields():
+            args[field] = partner_id[field] or ''
+
+        return address_format % args
+
+    def get_consignor_country(self, partner_id):
+        if not partner_id and not partner_id.country_id:
+            return ""
+
+        return partner_id.country_id.display_name
 
     def get_consignee_name_address(self, picking):
         partner = picking.sale_id.partner_id
@@ -82,23 +103,57 @@ class ReportCMR(models.AbstractModel):
         }
 
     def get_carrier_data(self, picking):
-        info = picking.carrier_address
-        if info:
-            info = info.replace('\n', '<br/>')
-        else:
-            info = '<br/>'
+        info = picking.successive_carrier_address
+        forwarder = picking.carrier_partner
         note = picking.carrier_notes
         if note:
             note = note.replace('\n', '<br/>')
         else:
             note = '<br/>'
 
-        info = info + '<br/><br/>'
         return {
-            'info': info,
+            'info': info._display_address(),
+            'forwarder': forwarder._display_address(),
             'note': note,
             'carrier_details': plaintext2html(picking.carrier_details)
         }
+
+    def get_sum_data(self, o):
+        lines = o.move_ids
+        volume_sum = 0
+
+        for line in lines:
+            volume_sum += line.quantity * line.product_id.volume
+
+        return {
+            'weigth_sum': float_round(sum(lines.mapped('quantity')), precision_digits=2, rounding_method='HALF-UP'),
+            'volume_sum': float_round(volume_sum, precision_digits=2, rounding_method='HALF-UP'),
+        }
+
+    def get_lines(self, o):
+        lines = o.move_ids
+        product_lines = []
+
+        for item in lines:
+            name = item.product_id.name
+            name = '<strong>' + name + '</strong><br/>'
+            hs_code = item.product_id.hs_code
+
+            if hs_code:
+                name = name + 'HS: ' + hs_code + '<br/>'
+
+            name = name + '<br/>'
+
+            product_lines.append({
+                'name': name,
+                'number': item.product_packaging_quantity,
+                'weight': item.quantity,
+                'volume': item.quantity * item.product_id.volume,
+                'method_packing': item.product_packaging_id.display_name or '',
+                'intrastat_code': item.product_id.intrastat_code_id.code or ''
+            })
+
+        return product_lines
 
     def get_product_data(self, line):
         name = line.product_id.name
@@ -110,9 +165,9 @@ class ReportCMR(models.AbstractModel):
 
         name = name + '<br/>'
 
-        number = line.quantity
-        weight = line.product_id.weight * number
-        volume = line.product_id.volume * number
+        number = line.move_id.product_packaging_quantity # .quantity
+        weight = line.quantity_product_uom
+        volume = line.quantity
 
         return {
             'name': name,
@@ -126,8 +181,8 @@ class ReportCMR(models.AbstractModel):
     def get_goods_data(self, picking):
         date_format = get_lang(self.env).date_format
         return {
-            'place': picking.place or self.get_consignor_name(picking),
-            'state': picking.cmr_country or self.get_consignor_address(picking),
+            'place': self.get_consignor_adrress_without_country(picking.place_contact) if picking.place_contact else self.get_consignor_adrress_without_country(picking.sudo().company_id.partner_id),
+            'state': self.get_consignor_country(picking.place_contact) if picking.place_contact else self.get_consignor_country(picking.sudo().company_id.partner_id),
             'date': picking.date and picking.date.strftime(date_format) or picking.scheduled_date.strftime(date_format)
         }
 
@@ -150,12 +205,13 @@ class ReportCMR(models.AbstractModel):
             'get_consignor_address': self.get_consignor_address,
             'get_consignee_name_address': self.get_consignee_name_address,
             'get_partner_delivery_address_next': self.get_partner_delivery_address_next,
-            # 'get_partner_picking_address': self.get_partner_picking_address,
             'get_annexed_documents': self.get_annexed_documents,
             'get_notes': self.get_notes,
             'get_car_data': self.get_car_data,
             'get_carrier_data': self.get_carrier_data,
             'get_product_data': self.get_product_data,
+            'get_sum_data': self.get_sum_data,
+            'get_lines': self.get_lines,
             'get_goods_data': self.get_goods_data,
             'get_incoterm': self.get_incoterm,
         }

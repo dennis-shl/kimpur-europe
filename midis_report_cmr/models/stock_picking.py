@@ -14,11 +14,13 @@ class Picking(models.Model):
     car_26 = fields.Char()
     sidecar_26 = fields.Char()
 
-    carrier_address = fields.Text('Successive Carriers')
+    carrier_partner = fields.Many2one('res.partner', string='Carrier/Forwarder')
+    successive_carrier_address = fields.Many2one('res.partner', string='Successive Carriers')
     carrier_notes = fields.Text(string='Carrier`s Reservations and Observations')
     carrier_details = fields.Text(string='Signature and stamp of the carrier 23')
 
     place = fields.Char()
+    place_contact = fields.Many2one('res.partner', string='Place')
     cmr_country = fields.Char('Country')
     date = fields.Date()
 
