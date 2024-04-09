@@ -217,10 +217,10 @@
                                     <strong t-raw="line['intrastat_code']"/>
                                 </td>
                                 <td colspan="2">
-                                    <strong t-raw="line['weight']"/>
+                                    <strong t-raw="line['weight']" t-options="{'widget': 'float', 'precision': 2}"/>
                                 </td>
                                 <td colspan="2">
-                                    <strong t-raw="line['volume']"/>
+                                    <strong t-raw="line['volume']" t-options="{'widget': 'float', 'precision': 2}"/>
                                 </td>
                             </tr>
 
@@ -236,10 +236,10 @@
                                 <td colspan="2">
                                 </td>
                                 <td colspan="2">
-                                    <strong t-esc="sum_data['weigth_sum']"/>
+                                    <strong t-esc="sum_data['weigth_sum']" t-options="{'widget': 'float', 'precision': 2}"/>
                                 </td>
                                 <td colspan="2">
-                                    <strong t-esc="sum_data['volume_sum']"/>
+                                    <strong t-esc="sum_data['volume_sum']" t-options="{'widget': 'float', 'precision': 2}"/>
                                 </td>
                             </tr>
 
