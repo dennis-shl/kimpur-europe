@@ -121,12 +121,14 @@ class ReportCMR(models.AbstractModel):
     def get_sum_data(self, o):
         lines = o.move_ids
         volume_sum = 0
+        weigth_sum = 0
 
         for line in lines:
             volume_sum += line.quantity * line.product_id.volume
+            weigth_sum += line.quantity * line.product_id.weight
 
         return {
-            'weigth_sum': float_round(sum(lines.mapped('quantity')), precision_digits=2, rounding_method='HALF-UP'),
+            'weigth_sum': float_round(weigth_sum, precision_digits=2, rounding_method='HALF-UP'),
             'volume_sum': float_round(volume_sum, precision_digits=2, rounding_method='HALF-UP'),
         }
 
@@ -147,7 +149,7 @@ class ReportCMR(models.AbstractModel):
             product_lines.append({
                 'name': name,
                 'number': item.product_packaging_quantity,
-                'weight': item.quantity,
+                'weight': item.quantity * item.product_id.weight,
                 'volume': item.quantity * item.product_id.volume,
                 'method_packing': item.product_packaging_id.display_name or '',
                 'intrastat_code': item.product_id.intrastat_code_id.code or ''
@@ -166,7 +168,7 @@ class ReportCMR(models.AbstractModel):
         name = name + '<br/>'
 
         number = line.move_id.product_packaging_quantity # .quantity
-        weight = line.quantity_product_uom
+        weight = line.product_id.weight * line.move_id.product_packaging_quantity
         volume = line.quantity
 
         return {

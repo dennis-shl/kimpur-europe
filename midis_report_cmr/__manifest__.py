@@ -1,7 +1,7 @@
 {
     'name': 'Print Picking CMR',
     'summary': 'CMR Report from Picking',
-    'version': '17.0.1.5',
+    'version': '17.0.1.6',
     'category': 'Warehouse Management',
     'website': "https://midis.eu",
     'author': 'Midis (www.midis.eu)',
