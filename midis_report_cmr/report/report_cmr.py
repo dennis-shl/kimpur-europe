@@ -42,10 +42,21 @@ class ReportCMR(models.AbstractModel):
         return partner_id.country_id.display_name
 
     def get_consignee_name_address(self, picking):
-        partner = picking.sale_id.partner_id
+        partner = picking.partner_id
+
+        if not partner:
+            return ""
+
         address = partner.contact_address or ''
         address = plaintext2html(address)
-        return address
+        contact_fields = []
+        if not partner.is_company and partner.display_name:
+            contact_fields.append(partner.display_name)
+        if partner.phone:
+            contact_fields.append(partner.phone)
+        if partner.mobile:
+            contact_fields.append(partner.mobile)
+        return f'{", ".join(contact_fields)}{address}'
 
     def get_partner_delivery_address_next(self, picking):
         if picking.is_delivery_manual and picking.delivery_address_id:
