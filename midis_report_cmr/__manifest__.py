@@ -1,7 +1,7 @@
 {
     'name': 'Print Picking CMR',
     'summary': 'CMR Report from Picking',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.0.0',
     'category': 'Warehouse Management',
     'website': "https://midis.eu",
     'author': 'Midis (www.midis.eu)',
@@ -18,4 +18,5 @@
         'views/stock_picking_views.xml',
         'views/product_template_views.xml',
     ],
+    'installable': True,
 }
