@@ -16,7 +16,7 @@
             </t>
         </t>
 
-        <t t-call="midis_report_cmr.external_layout_boxed_cmr"><t t-raw="0"/></t>
+        <t t-call="midis_report_cmr.external_layout_boxed_cmr"><t t-out="0"/></t>
     </template>
     <template id="external_layout_boxed_cmr">
         <div t-attf-class="header o_company_#{company.id}_layout"/>
@@ -32,7 +32,7 @@
                 }
             </style>
             <img class="inner-block" src="/midis_report_cmr/static/src/img/cmr.png"/>
-            <t t-raw="0"/>
+            <t t-out="0"/>
         </div>
         <div t-attf-class="footer o_company_#{company.id}_layout"/>
     </template>
@@ -107,10 +107,10 @@
                             <tr>
                                 <td colspan="2">
 <!--                                    <span t-esc="o.sale_id.partner_id.name" style="font-weight:bold"/><br/>-->
-                                    <span t-raw="consignee_name_address" style="font-weight:bold"/>
+                                    <span t-out="consignee_name_address" style="font-weight:bold"/>
                                 </td>
                                 <td style="border-left: 3px solid; border-right: 3px solid;" colspan="2">
-                                    <span t-raw="carrier_data['forwarder']"/>
+                                    <span t-out="carrier_data['forwarder']"/>
                                 </td>
                             </tr>
                             <tr>
@@ -126,10 +126,10 @@
                             <tr>
                                 <td colspan="2">
                                     <span>Vieta/Place</span><br/>
-                                    <span t-raw="partner_delivery_address_next"><br/></span>
+                                    <span t-out="partner_delivery_address_next"><br/></span>
                                 </td>
                                 <td style="border-left: 3px solid; border-right: 3px solid;" colspan="2">
-                                    <span t-raw="carrier_data['info']"/>
+                                    <span t-out="carrier_data['info']"/>
                                 </td>
                             </tr>
                             <tr>
@@ -149,7 +149,7 @@
                                     <span>Datums/Date: </span><strong t-esc="goods_data['date']"/>
                                 </td>
                                 <td style="border-left: 3px solid; border-right: 3px solid;" colspan="2">
-                                    <div t-raw="carrier_data['note']"/>
+                                    <div t-out="carrier_data['note']"/>
                                 </td>
                             </tr>
                             <tr>
@@ -202,25 +202,25 @@
 
                             <tr t-foreach="get_lines" t-as="line">
                                 <td colspan="2">
-                                    <span t-raw="line['name']" />
+                                    <span t-out="line['name']" />
                                 </td>
                                 <td colspan="2">
-                                    <strong t-raw="line['number']"/>
+                                    <strong t-out="line['number']"/>
                                 </td>
                                 <td colspan="2">
-                                    <strong t-raw="line['method_packing']"/>
+                                    <strong t-out="line['method_packing']"/>
                                 </td>
                                 <td colspan="2">
                                     <br/>
                                 </td>
                                 <td colspan="2">
-                                    <strong t-raw="line['intrastat_code']"/>
+                                    <strong t-out="line['intrastat_code']"/>
                                 </td>
                                 <td colspan="2">
-                                    <strong t-raw="line['weight']" t-options="{'widget': 'float', 'precision': 2}"/>
+                                    <strong t-out="line['weight']" t-options="{'widget': 'float', 'precision': 2}"/>
                                 </td>
                                 <td colspan="2">
-                                    <strong t-raw="line['volume']" t-options="{'widget': 'float', 'precision': 2}"/>
+                                    <strong t-out="line['volume']" t-options="{'widget': 'float', 'precision': 2}"/>
                                 </td>
                             </tr>
 

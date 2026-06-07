@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <record id="paperformat_euro" model="report.paperformat">
-            <field name="name">CRM</field>
+            <field name="name">CMR</field>
             <field name="default" eval="True" />
             <field name="format">A4</field>
             <field name="page_height">0</field>

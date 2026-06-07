@@ -3,9 +3,9 @@
     <record id="product_template_only_form_view_sharkcage_stock" model="ir.ui.view">
         <field name="name">product.template.form.sharkcage.stock</field>
         <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
-            <field name="default_code" position="before">
+            <field name="categ_id" position="after">
                 <field name="hs_code"/>
             </field>
         </field>

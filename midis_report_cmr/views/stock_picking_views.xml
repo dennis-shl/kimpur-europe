@@ -27,7 +27,7 @@
                                 <field name="carrier_details"/>
                             </group>
 
-                            <group string="Place of Delivery of the Goods" name="place goods">
+                            <group string="Place of Delivery of the Goods" name="place_goods">
                                 <field name="is_delivery_manual"/>
                                 <field name="delivery_address_id" invisible="is_delivery_manual == False"/>
                             </group>
@@ -48,9 +48,6 @@
                             </group>
                         </group>
                     </page>
-                </xpath>
-                <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_packaging_id']" position="after">
-                    <field name="product_packaging_qty"/>
                 </xpath>
             </field>
         </record>
