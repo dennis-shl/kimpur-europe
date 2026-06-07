@@ -1,2 +1,3 @@
 Trigger Odoo.sh upgrade update
 myacc_triger
+202606071521
