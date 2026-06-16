@@ -30,7 +30,6 @@ pricelist rule price.
     "license": "OPL-1",
     "depends": [
         "sale",
-        "myacc_access",
     ],
     "data": [
         "views/sale_order_views.xml",
