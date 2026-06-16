@@ -14,18 +14,24 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='order_line']/*[self::list or self::tree]/field[@name='price_unit']"
+            <xpath expr="//field[@name='order_line']/*[self::list or self::tree]/field[@name='product_uom_id']"
                    position="after">
-                <field name="base_uom_id" column_invisible="1"/>
+                <field name="product_base_uom_id"
+                       string="Main UoM"
+                       optional="show"
+                       readonly="1"/>
                 <field name="price_unit_base_uom"
-                       string="Base Unit Price"
-                       optional="show"/>
+                       string="Unit Price (Main UoM)"
+                       optional="show"
+                       readonly="1"/>
             </xpath>
-            <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']"
+            <xpath expr="//field[@name='order_line']/form//field[@name='product_uom_id']"
                    position="after">
-                <field name="base_uom_id" invisible="1"/>
+                <field name="product_base_uom_id"
+                       string="Main UoM"
+                       readonly="1"/>
                 <field name="price_unit_base_uom"
-                       string="Base Unit Price"
+                       string="Unit Price (Main UoM)"
                        readonly="1"/>
             </xpath>
         </field>

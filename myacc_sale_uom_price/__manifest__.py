@@ -13,7 +13,7 @@
 ##############################################################################
 {
     "name": "Sale Price per Base UoM",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "summary": "Show quotation line price per product base unit (e.g. kg)",
     "description": """
 Sale Price per Base UoM

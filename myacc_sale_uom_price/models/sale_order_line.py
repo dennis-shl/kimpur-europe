@@ -18,20 +18,26 @@ from odoo import api, fields, models
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
+    product_base_uom_id = fields.Many2one(
+        comodel_name="uom.uom",
+        string="Main UoM",
+        compute="_compute_product_base_uom_id",
+        readonly=True,
+    )
     price_unit_base_uom = fields.Monetary(
-        string="Base Unit Price",
+        string="Unit Price (Main UoM)",
         compute="_compute_price_unit_base_uom",
         currency_field="currency_id",
-        help=(
-            "Catalog price per product base unit of measure "
-            "(for example kg), taken from the sales pricelist rule price."
-        ),
+        help="Unit price per the product main unit of measure from the sales pricelist.",
     )
-    base_uom_id = fields.Many2one(
-        comodel_name="uom.uom",
-        related="product_id.uom_id",
-        string="Base UoM",
-    )
+
+    @api.depends("product_id", "product_id.uom_id", "display_type")
+    def _compute_product_base_uom_id(self):
+        for line in self:
+            if line.display_type or not line.product_id:
+                line.product_base_uom_id = False
+            else:
+                line.product_base_uom_id = line.product_id.uom_id
 
     def _get_pricelist_kwargs_base_uom(self):
         self.ensure_one()
@@ -43,7 +49,7 @@ class SaleOrderLine(models.Model):
         }
 
     def _get_pricelist_price_in_base_uom(self):
-        """Return pricelist rule price for the product base UoM."""
+        """Return pricelist rule price for the product main UoM."""
         self.ensure_one()
         if not self.product_id or self.display_type or not self.product_uom_id:
             return 0.0
@@ -51,6 +57,7 @@ class SaleOrderLine(models.Model):
             return 0.0
 
         product = self.product_id.with_context(**self._get_product_price_context())
+        base_uom = product.uom_id
         product_taxes = product.taxes_id._filter_taxes_by_company(self.company_id)
         pricelist = self.order_id.pricelist_id
         kwargs = self._get_pricelist_kwargs_base_uom()
@@ -66,9 +73,9 @@ class SaleOrderLine(models.Model):
                     **kwargs,
                 )
             else:
-                price = product.lst_price
+                price = base_uom._compute_price(product.lst_price, base_uom)
         else:
-            price = product.lst_price
+            price = base_uom._compute_price(product.lst_price, base_uom)
 
         return product._get_tax_included_unit_price_from_price(
             price,
@@ -78,6 +85,7 @@ class SaleOrderLine(models.Model):
 
     @api.depends(
         "product_id",
+        "product_id.uom_id",
         "product_uom_id",
         "product_uom_qty",
         "product_no_variant_attribute_value_ids",
@@ -89,7 +97,6 @@ class SaleOrderLine(models.Model):
         "tax_ids",
         "display_type",
         "product_id.lst_price",
-        "product_id.uom_id",
     )
     def _compute_price_unit_base_uom(self):
         for line in self:
