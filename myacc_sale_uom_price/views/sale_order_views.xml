@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+##############################################################################
+#
+#    Part of myACC. Proprietary and Confidential.
+#    © 2026 myACC, IK. All rights reserved.
+#
+##############################################################################
+-->
+<odoo>
+
+    <record id="sale_order_form_price_unit_base_uom" model="ir.ui.view">
+        <field name="name">sale.order.form.price.unit.base.uom</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/*[self::list or self::tree]/field[@name='price_unit']"
+                   position="after">
+                <field name="base_uom_id" column_invisible="1"/>
+                <field name="price_unit_base_uom"
+                       string="Base Unit Price"
+                       optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']"
+                   position="after">
+                <field name="base_uom_id" invisible="1"/>
+                <field name="price_unit_base_uom"
+                       string="Base Unit Price"
+                       readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
